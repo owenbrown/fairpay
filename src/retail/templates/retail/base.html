@@ -1,0 +1,16 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="view-transition" content="same-origin" />
+    <title>{% block title %}Fairpay{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'retail/site.css' %}" />
+  </head>
+  <body>
+    <main class="page">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

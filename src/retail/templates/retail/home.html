@@ -1,0 +1,15 @@
+{% extends "retail/base.html" %}
+
+{% block title %}Home | Fairpay{% endblock %}
+
+{% block content %}
+  <section class="panel" aria-labelledby="home-title">
+    <h1 id="home-title">You're in.</h1>
+    <p class="lead">You are signed in as {{ request.user.email }}.</p>
+
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button class="button" type="submit">Log out</button>
+    </form>
+  </section>
+{% endblock %}

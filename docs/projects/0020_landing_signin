@@ -1,0 +1,8 @@
+# 0020 Landing + Sign In
+
+## Plan
+- Confirm template/static location and auth UX details (email-as-username, routes, copy).
+- Wire app + auth: add `retail` to `INSTALLED_APPS`, set `AUTH_USER_MODEL`, add URL routes.
+- Implement auth flow: custom user (email login), signup form, login/logout, and home view.
+- Create templates for index/signup/login/home and a single shared CSS file.
+- Quick smoke-check of navigation flow and responsive layout.

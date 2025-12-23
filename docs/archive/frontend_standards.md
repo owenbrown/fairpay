@@ -10,6 +10,7 @@
 - Uses modern HTML and CSS features (View Transitions API, Container Queries, :has(), etc.)
 - Minimizes use of JavaScript
 - Simplicity of code and implementation trumps all other goals
+- Do not make code longer or more complex to support older browsers. Do not try to support older browsers.
 
 ## Design Requirements
 - - Prevents flicker between page transitions using View Transitions API

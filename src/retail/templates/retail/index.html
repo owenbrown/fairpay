@@ -1,0 +1,20 @@
+{% extends "retail/base.html" %}
+
+{% block title %}Fairpay{% endblock %}
+
+{% block content %}
+  <section class="panel hero" aria-labelledby="hero-title">
+    <p class="eyebrow">Title</p>
+    <h1 id="hero-title">Welcome to Fairpay.</h1>
+    <p class="lead">
+      Fairpay is an app that keeps retailers from overcharging you. When you shop,
+      you'll take pictures of the price tags. Then, after you pay, take a picture
+      of your receipt. Fairpay will let you know immediately whether you've been
+      overbilled.
+    </p>
+    <div class="actions" role="group" aria-label="Get started">
+      <a class="button" href="{% url 'signup' %}">Sign Up</a>
+      <a class="button" href="{% url 'login' %}">Existing User Login</a>
+    </div>
+  </section>
+{% endblock %}

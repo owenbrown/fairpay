@@ -1,8 +1,7 @@
 This document describes each stage of developing this application.
 The numbering system matching each document to the detailed markdown file in docs/projects/
 
-0010 Create Django application with landing page
-0011 Document how Django app is structured
+0010 [x] Create Django application with landing page
 0020 Allow user to sign into landing page
 0025 Create mock frontend application, without uplaoding real images
  - To aid visualization, use stub images

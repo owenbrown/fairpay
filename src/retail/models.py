@@ -18,3 +18,8 @@ class User(TimeStampedModel, AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+
+class PriceTag(TimeStampedModel):
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    image_storage_location = models.TextField()

@@ -1,15 +1,22 @@
-{% extends "retail/base.html" %}
-
-{% block title %}Home | Fairpay{% endblock %}
-
+{% extends "retail/base.html" %} {% block title %}Home | Fairpay{% endblock %}
 {% block content %}
-  <section class="panel" aria-labelledby="home-title">
+<section class="panel" aria-labelledby="home-title">
     <h1 id="home-title">You're in.</h1>
     <p class="lead">You are signed in as {{ request.user.email }}.</p>
 
+    <div class="actions actions--equal" role="group" aria-label="Store visits">
+        <form method="post" action="{% url 'store_visit_create' %}">
+            {% csrf_token %}
+            <button class="button" type="submit">Create Store Visit</button>
+        </form>
+        <a class="button" href="{% url 'store_visit_list' %}"
+            >Prior Store Visits</a
+        >
+    </div>
+
     <form method="post" action="{% url 'logout' %}">
-      {% csrf_token %}
-      <button class="button" type="submit">Log out</button>
+        {% csrf_token %}
+        <button class="link-button" type="submit">Log out</button>
     </form>
-  </section>
+</section>
 {% endblock %}

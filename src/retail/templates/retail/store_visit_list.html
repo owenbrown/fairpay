@@ -1,0 +1,42 @@
+{% extends "retail/base.html" %}
+
+{% block title %}Store Visits | Fairpay{% endblock %}
+
+{% block content %}
+  <section class="panel" aria-labelledby="visits-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Store Visits</p>
+        <h1 id="visits-title">Store Visits</h1>
+      </div>
+      <a class="link-subtle" href="{% url 'home' %}">Back to home</a>
+    </div>
+
+    {% if store_visits %}
+      <div class="table-wrapper" role="region" aria-labelledby="visits-title">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Created at (UTC)</th>
+              <th scope="col">Price Tags</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for store_visit in store_visits %}
+              <tr>
+                <td>
+                  <a class="link-subtle" href="{% url 'store_visit_detail' store_visit_id=store_visit.id %}">
+                    {{ store_visit.created_at|date:"c" }}
+                  </a>
+                </td>
+                <td>{{ store_visit.pricetag_count }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="subtle">No store visits yet.</p>
+    {% endif %}
+  </section>
+{% endblock %}

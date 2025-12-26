@@ -1,0 +1,108 @@
+{% extends "retail/base.html" %}
+
+{% block title %}Store Visit | Fairpay{% endblock %}
+
+{% block content %}
+  <section class="panel" aria-labelledby="visit-title">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Store Visit</p>
+        <h1 id="visit-title">Store Visit</h1>
+        <p class="subtle">Created at {{ store_visit.created_at|date:"c" }}</p>
+      </div>
+      <a class="link-subtle" href="{% url 'store_visit_list' %}">Back to store visits</a>
+    </div>
+
+    <div class="stack">
+      <div class="stack">
+        <h2 class="section-title">Price Tags</h2>
+        <p class="subtle">Capture a picture of each price tag.</p>
+      </div>
+
+      <div class="actions">
+        <label class="button" for="pricetag-input">Capture Price Tag</label>
+      </div>
+      <input
+        class="visually-hidden"
+        id="pricetag-input"
+        type="file"
+        accept="image/*"
+        capture="environment"
+      />
+      <p class="subtle" id="pricetag-status" role="status"></p>
+
+      <ul class="tag-list" id="pricetag-list">
+        {% for pricetag in pricetags %}
+          <li class="tag-item">{{ pricetag.created_at|date:"c" }}</li>
+        {% empty %}
+          <li class="tag-item tag-item--empty" id="pricetag-empty">No price tags yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+  <script>
+    (() => {
+      const input = document.getElementById("pricetag-input");
+      const list = document.getElementById("pricetag-list");
+      const status = document.getElementById("pricetag-status");
+      if (!input || !list || !status) {
+        return;
+      }
+
+      const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+          return parts.pop().split(";").shift();
+        }
+        return "";
+      };
+
+      input.addEventListener("change", async () => {
+        const file = input.files && input.files[0];
+        if (!file) {
+          return;
+        }
+
+        status.textContent = "Uploading...";
+        const formData = new FormData();
+        formData.append("image", file);
+        formData.append("store_visit_id", "{{ store_visit.id }}");
+        const csrfToken = getCookie("csrftoken");
+
+        try {
+          const response = await fetch("/api/pricetag", {
+            method: "POST",
+            body: formData,
+            headers: csrfToken ? { "X-CSRFToken": csrfToken } : {},
+            credentials: "same-origin",
+          });
+
+          if (!response.ok) {
+            throw new Error("Upload failed");
+          }
+
+          const data = await response.json();
+          if (data.pricetag_created_at) {
+            const item = document.createElement("li");
+            item.className = "tag-item";
+            item.textContent = data.pricetag_created_at;
+            list.prepend(item);
+
+            const emptyState = document.getElementById("pricetag-empty");
+            if (emptyState) {
+              emptyState.remove();
+            }
+          }
+
+          status.textContent = "Saved.";
+        } catch (error) {
+          status.textContent = "Upload failed. Please try again.";
+        } finally {
+          input.value = "";
+        }
+      });
+    })();
+  </script>
+{% endblock %}

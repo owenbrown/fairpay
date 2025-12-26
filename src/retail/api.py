@@ -2,10 +2,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from django.http import HttpRequest
-from ninja import File, NinjaAPI
+from ninja import File, Form, NinjaAPI
 from ninja.files import UploadedFile
 
-from .models import PriceTag
+from .models import PriceTag, StoreVisit
 
 api = NinjaAPI()
 
@@ -13,9 +13,20 @@ IMAGE_STORAGE_DIR = Path.home() / "code/appdata/fairpay/images/pricetag"
 
 
 @api.post("/pricetag")
-def create_pricetag(request: HttpRequest, image: UploadedFile = File(...)):
+def create_pricetag(
+    request: HttpRequest,
+    store_visit_id: int = Form(...),
+    image: UploadedFile = File(...),
+):
     if not request.user.is_authenticated:
         return 401, {"detail": "Authentication required"}
+
+    store_visit = StoreVisit.objects.filter(
+        id=store_visit_id,
+        user=request.user,
+    ).first()
+    if not store_visit:
+        return 404, {"detail": "Store visit not found"}
 
     IMAGE_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -30,6 +41,10 @@ def create_pricetag(request: HttpRequest, image: UploadedFile = File(...)):
     pricetag = PriceTag.objects.create(
         uploaded_by=request.user,
         image_storage_location=str(file_path),
+        store_visit=store_visit,
     )
 
-    return {"pricetag_id": pricetag.id}
+    return {
+        "pricetag_id": pricetag.id,
+        "pricetag_created_at": pricetag.created_at.isoformat(),
+    }

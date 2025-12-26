@@ -23,3 +23,10 @@ class User(TimeStampedModel, AbstractUser):
 class PriceTag(TimeStampedModel):
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
     image_storage_location = models.TextField()
+    store_visit = models.ForeignKey("Visit", on_delete=models.CASCADE)
+
+
+class StoreVisit(TimeStampedModel):
+    """Conceptually, a trip to a retailer. All PriceTag associated with a visit should match the Receipt associated with a store visit, or the user is being overcharged."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

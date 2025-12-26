@@ -23,7 +23,7 @@ class User(TimeStampedModel, AbstractUser):
 class PriceTag(TimeStampedModel):
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
     image_storage_location = models.TextField()
-    store_visit = models.ForeignKey("Visit", on_delete=models.CASCADE)
+    store_visit = models.ForeignKey("StoreVisit", on_delete=models.CASCADE)
 
 
 class StoreVisit(TimeStampedModel):

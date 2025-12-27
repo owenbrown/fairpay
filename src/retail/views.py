@@ -5,7 +5,7 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import EmailAuthenticationForm, SignUpForm
-from .models import PriceTag, StoreVisit
+from .models import PriceTag, Receipt, StoreVisit
 
 
 def index(request):
@@ -73,11 +73,15 @@ def store_visit_detail(request, store_visit_id):
     pricetags = PriceTag.objects.filter(store_visit=store_visit).order_by(
         "-created_at"
     )
+    receipts = Receipt.objects.filter(store_visit=store_visit).order_by(
+        "-created_at"
+    )
     return render(
         request,
         "retail/store_visit_detail.html",
         {
             "store_visit": store_visit,
             "pricetags": pricetags,
+            "receipts": receipts,
         },
     )

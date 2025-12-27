@@ -39,17 +39,37 @@
         {% endfor %}
       </ul>
     </div>
+
+    <div class="stack">
+      <div class="stack">
+        <h2 class="section-title">Receipts</h2>
+        <p class="subtle">Capture a picture of your receipt.</p>
+      </div>
+
+      <div class="actions">
+        <label class="button" for="receipt-input">Capture Receipt</label>
+      </div>
+      <input
+        class="visually-hidden"
+        id="receipt-input"
+        type="file"
+        accept="image/*"
+        capture="environment"
+      />
+      <p class="subtle" id="receipt-status" role="status"></p>
+
+      <ul class="tag-list" id="receipt-list">
+        {% for receipt in receipts %}
+          <li class="tag-item">{{ receipt.created_at|date:"c" }}</li>
+        {% empty %}
+          <li class="tag-item tag-item--empty" id="receipt-empty">No receipts yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
   </section>
 
   <script>
     (() => {
-      const input = document.getElementById("pricetag-input");
-      const list = document.getElementById("pricetag-list");
-      const status = document.getElementById("pricetag-status");
-      if (!input || !list || !status) {
-        return;
-      }
-
       const getCookie = (name) => {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -59,49 +79,82 @@
         return "";
       };
 
-      input.addEventListener("change", async () => {
-        const file = input.files && input.files[0];
-        if (!file) {
+      const attachUpload = ({
+        inputId,
+        listId,
+        statusId,
+        emptyId,
+        url,
+        createdAtKey,
+      }) => {
+        const input = document.getElementById(inputId);
+        const list = document.getElementById(listId);
+        const status = document.getElementById(statusId);
+        if (!input || !list || !status) {
           return;
         }
 
-        status.textContent = "Uploading...";
-        const formData = new FormData();
-        formData.append("image", file);
-        formData.append("store_visit_id", "{{ store_visit.id }}");
-        const csrfToken = getCookie("csrftoken");
-
-        try {
-          const response = await fetch("/api/pricetag", {
-            method: "POST",
-            body: formData,
-            headers: csrfToken ? { "X-CSRFToken": csrfToken } : {},
-            credentials: "same-origin",
-          });
-
-          if (!response.ok) {
-            throw new Error("Upload failed");
+        input.addEventListener("change", async () => {
+          const file = input.files && input.files[0];
+          if (!file) {
+            return;
           }
 
-          const data = await response.json();
-          if (data.pricetag_created_at) {
-            const item = document.createElement("li");
-            item.className = "tag-item";
-            item.textContent = data.pricetag_created_at;
-            list.prepend(item);
+          status.textContent = "Uploading...";
+          const formData = new FormData();
+          formData.append("image", file);
+          formData.append("store_visit_id", "{{ store_visit.id }}");
+          const csrfToken = getCookie("csrftoken");
 
-            const emptyState = document.getElementById("pricetag-empty");
-            if (emptyState) {
-              emptyState.remove();
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              body: formData,
+              headers: csrfToken ? { "X-CSRFToken": csrfToken } : {},
+              credentials: "same-origin",
+            });
+
+            if (!response.ok) {
+              throw new Error("Upload failed");
             }
-          }
 
-          status.textContent = "Saved.";
-        } catch (error) {
-          status.textContent = "Upload failed. Please try again.";
-        } finally {
-          input.value = "";
-        }
+            const data = await response.json();
+            if (data[createdAtKey]) {
+              const item = document.createElement("li");
+              item.className = "tag-item";
+              item.textContent = data[createdAtKey];
+              list.prepend(item);
+
+              const emptyState = document.getElementById(emptyId);
+              if (emptyState) {
+                emptyState.remove();
+              }
+            }
+
+            status.textContent = "Saved.";
+          } catch (error) {
+            status.textContent = "Upload failed. Please try again.";
+          } finally {
+            input.value = "";
+          }
+        });
+      };
+
+      attachUpload({
+        inputId: "pricetag-input",
+        listId: "pricetag-list",
+        statusId: "pricetag-status",
+        emptyId: "pricetag-empty",
+        url: "/api/pricetag",
+        createdAtKey: "pricetag_created_at",
+      });
+      attachUpload({
+        inputId: "receipt-input",
+        listId: "receipt-list",
+        statusId: "receipt-status",
+        emptyId: "receipt-empty",
+        url: "/api/receipt",
+        createdAtKey: "receipt_created_at",
       });
     })();
   </script>

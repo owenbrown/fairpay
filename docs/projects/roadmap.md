@@ -3,18 +3,9 @@ The numbering system matching each document to the detailed markdown file in doc
 
 0010 [x] Create Django application with landing page
 0020 [x] Allow user to sign into landing page
-0025 Create mock frontend application, without uplaoding real images
- - To aid visualization, use stub images
-0030 Allow user to scan price tags
- - Decide if async upload of the file is possible
- - Decide where to store file - s3, render storage, or other file system
- - Create Django model to store data
- - For proof of concept, storing the file in local file system is acceptable
- - Create huey task
+0030 [x] Allow user to scan price tags]
 0040 Configure Veryfi AnyDocs template. Complete task processor.
-0050 Allow user to upload receipt
- - Create Django model to store receipt
- - Call create task to upload recept to Veryfi
+0050 
 0060 Process call to Veryfi's recepts API endpoint
 0070 Design page that displays the results
  - There are many ways on how to dispaly this data
